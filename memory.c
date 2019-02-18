@@ -34,20 +34,14 @@ char load(int VA, int val) {
 /* * * * * * * * * * * * * * * * * * * * * * *
 *	User-related methods
 * * * * * * * * * * * * * * * * * * * * * * * */
-void userInput(void) {
+int userInput(void) {
 
 	printf("Instruction? ");
 
 	// Ex: 0,map,0,1
-	int check = scanf("%d,%c,%d,%d", processID, currInstruction, virtualAddress, value);
+	int check = scanf("%d,%5[^,],%d,%d", &processID, currInstruction, &virtualAddress, &value);
 
-	while (!check) {
-		printf("Invalid instruction.");
-		printf("Please input PID,instruction,virtualAddr,value\n");
-		userInput();
-	}
-
-
+	return check;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * *
@@ -56,12 +50,20 @@ void userInput(void) {
 
 int main(int argc, char** argv) {
 
-	// Will populate:
+	// userInput() will populate:
  	//	- processID
 	//  - currInstruction
 	//  - virtualAddress
 	//  - value
-	userInput();
+
+//	while (userInput() != 4) {
+//		printf("Invalid instruction. Please input PID,instruction,virtualAddr,value\n");
+//		userInput();
+//	}
+//
+//	if(processID < 0 || processID > 3) {
+//		printf("Invalid process ID specified.\n");
+//	}
 
 	return 0;
 }
