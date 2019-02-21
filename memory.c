@@ -1,8 +1,4 @@
 #include "memory.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * *
 *	Memory management methods
@@ -15,7 +11,7 @@
  * 	- calling map again with a different value should modify the existing value
  */
 void map(int processID, int virtAddr, int value) {
-	printf("map\n");	
+	printf("map\n");
 }
 
 /* Store(value, virtual_address):

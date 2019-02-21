@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <string.h>
 
 // Physical memory size is 64 bytes
 #define SIZE 64
@@ -23,6 +24,7 @@ unsigned char memory[SIZE];
 //   - Protection bit (0 or 1)
 //   - Valid bit (0: absent, 1: present)
 //   - Present bit (0: swap off, 1: swap on)
+
 
 void map(int processID, int virtAddr, int value);
 void store(int processID, int virtAddr, int value);
