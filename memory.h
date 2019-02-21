@@ -17,6 +17,8 @@
 #define PSIZE 16
 
 unsigned char memory[SIZE];
+int hasPageTable[4] // 0 if not, 1 if yes (index indicates corresponding process)
+int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 
 // Page table entry:
 //   - PFN (Physical Frame Number)

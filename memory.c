@@ -15,7 +15,18 @@
  * 	- calling map again with a different value should modify the existing value
  */
 void map(int processID, int virtAddr, int value) {
-	printf("map\n");	
+	printf("map\n");
+	if(hasPageTable[processID] == 0) {
+		
+		hasPageTable[processID] = 1;
+		int VPN = virtAddr/PSIZE;
+		int offset = virtAddr - VPN;
+		// if there is a page table entry already, check protection bits, if they do not change, do not update. Else, update page table entry (PFN is added base on what is next available in the free_list)
+			
+		
+	} else {
+	
+	}	
 }
 
 /* Store(value, virtual_address):
@@ -74,6 +85,7 @@ int main(int argc, char** argv) {
 	int virtAddr; // [0,63]
 	int value = -1; // [0,255]
 	char input[20]; // to receive from stdin
+
 
 	
 	while(1){
