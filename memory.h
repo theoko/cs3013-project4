@@ -24,15 +24,12 @@ unsigned char memory[SIZE];
 //   - Valid bit (0: absent, 1: present)
 //   - Present bit (0: swap off, 1: swap on)
 
-void map(int VA, int val);
-void store(int value, int VA);
-char load(int VA, int val); // val not used in this
+void map(int processID, int virtAddr, int value);
+void store(int processID, int virtAddr, int value);
+char load(int processID, int virtAddr, int value); // val not used in this
 
-int userInput(void);
+//int userInput(void);
 
-int processID; // [0, 3]
-char *currInstruction; // Store desired memory operation
-int virtualAddress; // [0, 63]
-int value; // value [0, 255]
+
 
 #endif
