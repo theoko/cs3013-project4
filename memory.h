@@ -16,9 +16,20 @@
 // Page size is 16 bytes
 #define PSIZE 16
 
+// Number of Pages in Memory
+#define PNUM 4
+
+struct hwStruct {
+
+	int location; // address in memory or line in "disk"
+	int inMem; // 1 if in memory, 0 if on "disk"
+};
+
+struct hwStruct hw[PNUM];
+
 unsigned char memory[SIZE];
-int hasPageTable[4] // 0 if not, 1 if yes (index indicates corresponding process)
-int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
+int hasPageTable[PNUM] // 0 if not, 1 if yes (index indicates corresponding process)
+int free_list[PNUM] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 
 // Page table entry:
 //   - PFN (Physical Frame Number)
@@ -27,7 +38,7 @@ int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 //   - Present bit (0: swap off, 1: swap on)
 
 void map(int processID, int virtAddr, int value);
-void store(int processID, int virtAddr, int value);
+int store(int processID, int virtAddr, int value);
 char load(int processID, int virtAddr, int value); // val not used in this
 
 //int userInput(void);
