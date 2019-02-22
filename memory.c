@@ -13,8 +13,12 @@
 void map(int processID, int virtAddr, int value) {
 
 	// Check if present in memory
-	if(pArr[processID].present) {
+	if(pArr[processID].present == 1) {
 
+	} else if (pArr[processID].present == 0) {
+		// -1
+	} else {
+		// -2
 	}
 
 	if(hasPageTable[processID] == 0) {
