@@ -36,12 +36,60 @@ void map(int processID, int virtAddr, int value) {
 	}	
 }
 
-/* Store(value, virtual_address):
+/* Store(processID, virtual_address, value):
  * 	- perform translation of the provided virtual_address
  * 	- write the value into the physical address associated with a virtual address
  */
-void store(int processID, int virtAddr, int value) {
-	printf("store\n");	
+int store(int processID, int virtAddr, int value) {
+	printf("store\n");
+	int physAddr; 
+	// check if it's a valid age table entry 
+	// find physical adress
+	if(page table entry is valid){
+		// convert
+		if (hw[processID].inMem == 1) {
+			int tempVirtAd = virtAddr; 
+			int virtPg = 0;
+			while (tempVirtAd >= PSIZE) {
+				if (tempVirtAd != 16)
+					tempVirtAd-=PSIZE;
+				
+				virtPg+=1;
+			}
+			
+			// QUESTION HERE-- do rest of if statement  !!!!!!!!!
+		} else {
+			printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+			physAddr = -1;	
+		}
+		
+		if(page can be edited, store value) {
+
+			memory[physAddr] = value;
+			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
+		} else {
+			printf("Virtual address %d is not writable\n");
+			return 0;
+		}
+				
+	} else if (page tble entry result is -1 - if page is in disk) {
+		int free_page = 0;
+		int i;
+		for (i = 0; i < PNUM; i++) {
+			if (free_list[i] == 1) // if there is a free page
+				free_page+=1;
+		}
+		
+		if ()
+
+	} else {
+		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+		return -1;
+	} 
+	//--------------------------------------
+
+	return 0;
+	
 }
 
 /* Load(virtual_address, value):

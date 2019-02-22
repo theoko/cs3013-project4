@@ -17,9 +17,16 @@
 // Page size is 16 bytes
 #define PSIZE 16
 
+// Number of Pages in Memory
+#define PNUM 4
+
+
 unsigned char memory[SIZE];
+int hasPageTable[PNUM] // 0 if not, 1 if yes (index indicates corresponding process)
+int free_list[PNUM] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 int hasPageTable[4]; // 0 if not, 1 if yes (index indicates corresponding process)
 int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
+
 
 // Page table entry:
 //   - PFN (Physical Frame Number)
@@ -31,7 +38,15 @@ typedef struct pnode {
 	int present;
 } p_node;
 
+
+void map(int processID, int virtAddr, int value);
+int store(int processID, int virtAddr, int value);
+char load(int processID, int virtAddr, int value); // val not used in this
+
+//int userInput(void);
+
 p_node pArr[4];
+
 
 void map(unsigned char processID, unsigned char virtAddr, unsigned char value);
 void store(unsigned char processID, unsigned char virtAddr, unsigned char value);
