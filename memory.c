@@ -1,8 +1,4 @@
 #include "memory.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * *
 *	Memory management methods
@@ -15,15 +11,22 @@
  * 	- calling map again with a different value should modify the existing value
  */
 void map(int processID, int virtAddr, int value) {
-	printf("map\n");
+
+	// Check if present in memory
+	if(pArr[processID].present) {
+
+	}
+
 	if(hasPageTable[processID] == 0) {
 		
 		hasPageTable[processID] = 1;
 		int VPN = virtAddr/PSIZE;
 		int offset = virtAddr - VPN;
 		// if there is a page table entry already, check protection bits, if they do not change, do not update. Else, update page table entry (PFN is added base on what is next available in the free_list)
-			
+		free_list[processID] = 0;
 		
+
+
 	} else {
 	
 	}	
