@@ -47,7 +47,7 @@ void space(int numFrames, int processID) {
 		if(removed[rr] == 0) { // TODO
 
 			delPage(pages[rr], rr * PSIZE); // TODO
-			printf("Swapped frame %d to disk line %d \n", rr, lines); // TODO
+			printf("Swapped frame %d to disk at swap slot %d \n", rr, lines); // TODO
 			removed[rr] = 1; // TODO
 			f++;
 			r();
@@ -84,7 +84,7 @@ void space(int numFrames, int processID) {
 			} else {
 
 				delPage(pages[rr], rr * PSIZE); // TODO
-				printf("Swapped frame %d to disk line %d \n", rr, // TODO
+				printf("Swapped frame %d to disk at swap slot %d \n", rr, // TODO
 						lines - 1);
 				f++;
 
@@ -111,7 +111,7 @@ int findSpace() {
 
 int pageToFile(unsigned char *buffer,int linenum, int base) {
 
-	FILE* f = fopen("swapspace.txt", "a");//open the file
+	FILE* f = fopen("swap.txt", "a");//open the file
 
 	fprintf(f,"%d ",linenum);//print out linenum
 
@@ -130,11 +130,11 @@ int pageToFile(unsigned char *buffer,int linenum, int base) {
 int pageFromFile(unsigned char *buffer, int linenum) {
 
 	if(linenum > lines) {
-		printf("Error:  line %d not found in disk \n",linenum);
+		printf("Error: line %d not found in disk \n",linenum);
 		return -1;
 	}
 
-	FILE * f = fopen("swapspace.txt", "r");//open
+	FILE * f = fopen("swap.txt", "r");//open
 
 	fseek(f,0,SEEK_SET);//make sure were at the top of the file
 
@@ -352,7 +352,7 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 		int sfree = findSpace();
 
-		printf("Page table for process %d created at address %d\n", processID, sfree);
+		printf("Put page table for PID %d into physical frame %d\n", processID, sfree);
 
 		ptbrArr[processID].addr = sfree;
 		ptbrArr[processID].present = 1;
@@ -386,11 +386,11 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 		if(memory[pte + 2] == value) {
 
-			printf("ERROR: Page already has value %d \n", value);
+			printf("ERROR: Page already has value %d\n", value);
 
 		} else{
 
-			printf("Altered Page value\n");
+			printf("Updated page value to %d\n", value);
 
 			memory[pte+2] = value;
 		
@@ -400,21 +400,21 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	}
 
-	int ppage = findSpace();
+	int physicalAddr = findSpace();
 
-	if(ppage < 0){
+	if(physicalAddr < 0){
 
 		space(1, processID);
 
-		ppage = findSpace();
+		physicalAddr = findSpace();
 
 	}
 
-	pages[ppage / PSIZE] = processID;
+	pages[physicalAddr / PSIZE] = processID;
 
-	printf("Physical page for VPN %d allocated at: %d\n", memory[pte],ppage);
+	printf("Mapped virtual address %d (page %d) into physical frame %d\n", memory[pte], getVPageCount(virtAddr), physicalAddr / PSIZE);
 
-	memory[pte + PFN] = ppage;
+	memory[pte + PFN] = physicalAddr;
 
 	memory[pte + PROTECTION] = value;
 
@@ -466,7 +466,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 		if(memory[PTEaddr+PROTECTION] == 1) { 
 
 			memory[physAddr] = value;
-			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d)\n", value, virtAddr, physAddr);
 		} else {
 			printf("Virtual address %c is not writeable\n", virtAddr);
 			return 0;
@@ -531,10 +531,10 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 	
 
 			memory[physAddr] = value;
-			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d)\n", value, virtAddr, physAddr);
 
 		} else {
-			printf("Not writeable");
+			printf("Error: writes are not allowed to this page\n");
 		}
 
 
@@ -705,7 +705,7 @@ int main(int argc, char** argv) {
 	int k;
 	rr = 0;
 
-	FILE * temp = fopen("swapspace.txt","w");
+	FILE * temp = fopen("swap.txt","w");
 	fclose(temp);
 
 	for(k = 0; k < PNUM; k++){
