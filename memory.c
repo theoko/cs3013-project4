@@ -73,7 +73,7 @@ int store(int processID, int virtAddr, int value) {
 			memory[physAddr] = value;
 			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
 		} else {
-			printf("Virtual address %d is not writable\n");
+			printf("Virtual address %d is not writeable\n");
 			return 0;
 		}
 				
@@ -100,7 +100,7 @@ int store(int processID, int virtAddr, int value) {
 					space(1, processID);
 
 				
-				//TODO: loadPage()
+				getPage(processID, virtAddr);
  
 			}
 			
@@ -109,10 +109,38 @@ int store(int processID, int virtAddr, int value) {
 
 		if (memory[PTEaddr + PROTECTION] == 1) {
 			//convert()
+			if(ptbrArr[processID].present == 1){
+				int tempVirtAd = virtAddr; 
+				int virtPg = 0;
+				while (tempVirtAd >= PSIZE) {
+					if (tempVirtAd != 16)
+						tempVirtAd-=PSIZE;
+				
+					virtPg+=1;
+				}
+
+		
+				
+				if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?	
+					printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+					return 0;			
+				}
+						
+			       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+				int offset = virtAddr - (PSIZE * virtPg);
+				physAddr += offset;
+			
+			} else {
+				printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+				return 0;
+			}
+	
+
 			memory[physAddr] = value;
 			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
+
 		} else {
-			printf("Not writeable")
+			printf("Not writeable");
 		}
 
 	} else {
