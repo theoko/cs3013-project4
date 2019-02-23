@@ -554,33 +554,134 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
  */
 int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
-//	int PTEaddr = getPTEAddress(processID, virtAddr);
-//
-//	if (PTEaddr >= 0) {
-//
-//		if(memory[PTEaddr + VALID] == 1) {
-//			int free_page = 0;
-//			int i;
-//			for (i=0; i<PNUM; i++) {
-//				if(free_list[i] == 1)
-//					free_page = 1;
-//			}
-//
-//			if (free_page) {
-//				getPage(processID, virtAddr);
-//			} else {
-//
-//				space(1, processID);
-//				getPage(processID, virtAddr);
-//
-//			}
-//		}
-//	} else if () {
-//
-//	} else {
-//		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
-//		return -1;
-//	}
+	int PTEaddr = getPTEAddress(processID, virtAddr);
+
+	if (PTEaddr >= 0) {
+
+		if(memory[PTEaddr + VALID] == 1) {
+			int free_page = 0;
+			int i;
+			for (i=0; i<PNUM; i++) {
+				if(free_list[i] == 1)
+					free_page = 1;
+			}
+
+			if (free_page) {
+				getPage(processID, virtAddr);
+			} else {
+
+				space(1, processID);
+				getPage(processID, virtAddr);
+
+			}
+		}
+	} else if (PTEaddr == -1) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+		int free_page = 0;
+		int i;
+		for (i = 0; i < PNUM; i++) {
+			if (free_list[i] == 1) // if there is a free page
+				free_page+=1;
+		}
+		
+		if (ptbrArr[processID].present == 0) {
+			if (free_page < 1) {
+				space(1, processID);
+			}
+
+			loadProcessPageTable(processID);
+			int PTEaddr = getPTEAddress(processID, virtAddr);			
+
+			if (memory[PTEaddr+VALID] == 1) {
+
+				free_page-=1;
+				if (free_page < 1)
+					space(1, processID);
+
+
+				getPage(processID, virtAddr);
+ 
+			}
+			
+		}
+
+
+
+			if(ptbrArr[processID].present == 1){
+				int tempVirtAd = virtAddr; 
+				int virtPg = 0;
+				while (tempVirtAd >= PSIZE) {
+					if (tempVirtAd != 16)
+						tempVirtAd-=PSIZE;
+				
+					virtPg+=1;
+				}
+
+		
+				
+				if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?	
+					printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+					return 0;			
+				}
+						
+			       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+				int offset = virtAddr - (PSIZE * virtPg);
+				physAddr += offset;
+			
+			} else {
+				printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+				return 0;
+			}
+	
+
+			memory[physAddr] = value;
+			printf("The value at virtual address %u (physical address %d\n) is %d\n", virtAddr, physAddr, memory[physAddr]);
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+	} else {
+		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+		return -1;
+	}
 
 	return 0;
 }
