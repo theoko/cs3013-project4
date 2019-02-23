@@ -22,10 +22,8 @@
 
 
 unsigned char memory[SIZE];
-int hasPageTable[PNUM] // 0 if not, 1 if yes (index indicates corresponding process)
+int hasPageTable[PNUM]; // 0 if not, 1 if yes (index indicates corresponding process)
 int free_list[PNUM] = {1,1,1,1}; // 1 if free, 0 if page is occupied
-int hasPageTable[4]; // 0 if not, 1 if yes (index indicates corresponding process)
-int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 
 
 // Page table entry:
@@ -33,25 +31,27 @@ int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 //   - Protection bit (0 or 1)
 //   - Valid bit (0: absent, 1: present)
 //   - Present bit (0: swap off, 1: swap on)
-typedef struct pnode {
+typedef struct PTBR_str {
 	int addr;
 	int present;
-} p_node;
+} ptbr;
 
 
-void map(int processID, int virtAddr, int value);
-int store(int processID, int virtAddr, int value);
-char load(int processID, int virtAddr, int value); // val not used in this
+// Helper methods
+int getVPageCount(int virtAddr);
+int getPTEAddress(int processID, int virtAddr);
 
-//int userInput(void);
+// Space allocation
+void space(int numFrames, int processID);
+int findSpace();
+int loadProcessPageTable(int processID);
 
-p_node pArr[4];
+// Map, Load and Store
+int map(unsigned char processID, unsigned char virtAddr, unsigned char value);
+int store(unsigned char processID, unsigned char virtAddr, unsigned char value);
+int load(unsigned char processID, unsigned char virtAddr, unsigned char value); // val not used in this
 
 
-void map(unsigned char processID, unsigned char virtAddr, unsigned char value);
-void store(unsigned char processID, unsigned char virtAddr, unsigned char value);
-char load(unsigned char processID, unsigned char virtAddr, unsigned char value); // val not used in this
-
-//int userInput(void);
+ptbr ptbrArr[4];
 
 #endif

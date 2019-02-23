@@ -4,36 +4,225 @@
 *	Memory management methods
 * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* Map(virtual_address, value):
+void space(int numFrames, int processID) {
+
+	robin();
+
+	int f = 0;
+
+	for(int i= 0; i < PNUM; i++) {
+		if(free_list[i]==1){
+			f++;
+		}
+	}
+
+	int removed[4];
+
+	for(int i =0; i < 4; i++){
+		removed[i] = 0;
+	}
+
+	while(f < numFrames){
+
+		int j = 0;
+		if(roundrobin * PSIZE == ptbrArr[processID].addr && ptbrArr[processID].present == 1) { // TODO
+
+			robin();
+			j++;
+
+		}
+
+		while(ispagetable[roundrobin] == 1) { // TODO
+
+			robin();
+			j++;
+			if(j==4){
+				break;
+			}
+
+		}
+
+		if(removed[roundrobin] == 0) { // TODO
+
+			removePage(pages[roundrobin], roundrobin * PAGEMEM); // TODO
+			printf("Swapped frame %d to disk line %d \n", roundrobin, linecount); // TODO
+			removed[roundrobin] = 1; // TODO
+			f++;
+			robin();
+			j++;
+
+		} else {
+
+			robin();
+			j++;
+
+		}
+
+		if(j==4){
+			break;
+		}
+	}
+
+	// Remove page tables
+	while(f < numOfFrames) {
+
+		if (roundrobin * PAGEMEM == ptbrArr[processID].addr && ptbrArr[processID].present == 1) { // TODO
+			robin();
+		}
+
+		if (removed[roundrobin] == 0) { // TODO
+
+			if (ispagetable[roundrobin] == 1) { // TODO
+				removePageTable(pages[roundrobin]); // TODO
+				robin();
+				f++;
+			} else {
+				removePage(pages[roundrobin], roundrobin * PSIZE); // TODO
+				printf("Swapped frame %d to disk line %d \n", roundrobin, // TODO
+						linecount - 1);
+				f++;
+			}
+
+		} else {
+			robin();
+		}
+	}
+
+}
+
+int findSpace() {
+	for(int i =0; i < PNUM; i++){
+		if(free_list[i]==1){
+			free_list[i] = 0;
+			return i * PSIZE;
+		}
+	}
+
+	// No space left
+	return -1;
+}
+
+int getVPageCount(int virtAddr) {
+	int tmp = virtAddr;
+
+	int countPages = 0;
+
+	while(tmp > PSIZE) {
+		tmp -= PSIZE;
+		countPages++;
+	}
+
+	if(tmp == PSIZE)
+		countPages++;
+
+	return countPages;
+}
+
+int getPTEAddress(int processID, int virtAddr) {
+	// Check if present in memory
+	if(ptbrArr[processID].present == 1) {
+
+		int vPages = getVPageCount(virtAddr);
+
+		return (4 * vPages) + ptbrArr[processID].addr;
+
+	} else if (ptbrArr[processID].present == 0) {
+		return -1;
+	} else {
+		return -2;
+	}
+}
+
+/* Map(processID, virtual_address, value):
  * 	- allocate a physical page
  * 	- create mapping in the page table between a virtual and a physical address
  * 	- if the value is set to 1, the page is writable & readable | 0 -> readable only
  * 	- calling map again with a different value should modify the existing value
  */
-void map(int processID, int virtAddr, int value) {
+int map(int processID, int virtAddr, int value) {
 
-	// Check if present in memory
-	if(pArr[processID].present == 1) {
+	// freespace
+	// findfree
+	// loadPageTable
 
-	} else if (pArr[processID].present == 0) {
-		// -1
-	} else {
-		// -2
+	int PTEAddress = getPTEAddress(processID, virtAddr);
+
+	if (PTEAddress == -2) {
+		
+		space(2, processID);
+
+		int sfree = findSpace();
+
+		printf("Page table for process %d created at address %d\n", processID, sfree);
+
+		ptbrArr[processID].addr = sfree;
+		ptbrArr[processID].present = 1;
+
+		pages[free / PSIZE] = processID; // TODO
+
+		ispagetable[free / PSIZE] = 1; // TODO
+
+		for(int i =0; i < PNUM; i++){
+			memory[ptbrArr[processID].addr + (4 * i)] = i;
+			memory[ptbrArr[processID].addr + (4 * i) + VALID] = 0;
+		}
+
+	} else if (PTEAddress == -1) {
+
+		freespace(1, processID);
+
+		int pt = loadPageTable(processID);
+
+		pages[pt / PSIZE] = processID; // TODO
+
+		ispagetable[pt / PSIZE] = 1; // TODO
+
+		printf("Loaded page table for process %d at address %d\n", processID, pt);
+
 	}
 
-	if(hasPageTable[processID] == 0) {
-		
-		hasPageTable[processID] = 1;
-		int VPN = virtAddr/PSIZE;
-		int offset = virtAddr - VPN;
-		// if there is a page table entry already, check protection bits, if they do not change, do not update. Else, update page table entry (PFN is added base on what is next available in the free_list)
-		free_list[processID] = 0;
-		
+	int pte = getPTEAddress(processID, virtAddr);
 
+	if (memory[pte + VALID] == 2){
 
-	} else {
-	
-	}	
+		if(memory[pte + 2] == value) {
+
+			printf("ERROR: Page already has value %d \n", value);
+
+		} else{
+
+			printf("Altered Page value\n");
+
+			memory[pte+2] = value;
+		
+		}
+
+		return 1;
+
+	}
+
+	int ppage = findfree();
+
+	if(ppage < 0){
+
+		freespace(1, processID);
+
+		ppage = findfree();
+
+	}
+
+	pages[ppage/16] = processID;
+
+	printf("Physical page for VPN %d allocated at: %d\n", memory[pte],ppage);
+
+	memory[pte + PFN] = ppage;
+
+	memory[pte + PROTECTION] = value;
+
+	memory[pte + VALID] = 2;
+
+	return 1;
+
 }
 
 /* Store(processID, virtual_address, value):
@@ -45,9 +234,9 @@ int store(int processID, int virtAddr, int value) {
 	int physAddr; 
 	// check if it's a valid age table entry 
 	// find physical adress
-	if(page table entry is valid){
+	if(page table entry is valid) {
 		// convert
-		if (hw[processID].inMem == 1) {
+		if (ptbrArr[processID].present == 1) {
 			int tempVirtAd = virtAddr; 
 			int virtPg = 0;
 			while (tempVirtAd >= PSIZE) {
@@ -96,7 +285,7 @@ int store(int processID, int virtAddr, int value) {
  *  - perform address translation of the provided virtual address
  * 	- return the byte stored in that virtual address
  */
-char load(int processID, int virtAddr,int value) {
+int load(int processID, int virtAddr,int value) {
 	printf("load\n");	
 	return 0;
 }
@@ -120,20 +309,10 @@ char load(int processID, int virtAddr,int value) {
 
 int main(int argc, char** argv) {
 
-	// userInput() will populate:
  	//	- processID
 	//  - currInstruction
 	//  - virtualAddress
 	//  - value
-
-//	while (userInput() != 4) {
-//		printf("Invalid instruction. Please input PID,instruction,virtualAddr,value\n");
-//		userInput();
-//	}
-//
-//	if(processID < 0 || processID > 3) {
-//		printf("Invalid process ID specified.\n");
-//	}
 
 	int processID; // [0, 3]
 	int selection = -1; // ID to execute instruction the user selected to run
