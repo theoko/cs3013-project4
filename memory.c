@@ -412,7 +412,7 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	pages[physicalAddr / PSIZE] = processID;
 
-	printf("Mapped virtual address %d (page %d) into physical frame %d\n", memory[pte], getVPageCount(virtAddr), physicalAddr / PSIZE);
+	printf("Mapped virtual address %d (page %d) into physical frame %d\n", virtAddr, getVPageCount(virtAddr), physicalAddr / PSIZE);
 
 	memory[pte + PFN] = physicalAddr;
 
@@ -555,6 +555,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	int PTEaddr = getPTEAddress(processID, virtAddr);
+	int physAddr;
 
 	if (PTEaddr >= 0) {
 
@@ -600,7 +601,7 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 				physAddr += offset;
 	
 			} else {
-				physAddress = -1;
+				physAddr = -1;
 			}
 
 			if (physAddr >= 0) {
@@ -636,7 +637,7 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 				physAddr += offset;
 	
 			} else {
-				physAddress = -1;
+				physAddr = -1;
 			}
 
 			
@@ -668,7 +669,7 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 				physAddr += offset;
 	
 			} else {
-				physAddress = -1;
+				physAddr = -1;
 			}
 
 			printf("The virtual address requested has not been allocated. Value at %u was %d", virtAddr, memory[physAddr]);

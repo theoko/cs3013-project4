@@ -1,0 +1,10 @@
+Instruction? 
+Put page table for PID 0 into physical frame 0
+Mapped virtual address 0 (page 0) into physical frame 1
+
+Instruction? 
+Stored value 24 at virtual address 12 (physical address 28)
+
+Instruction? 
+The value at virtual address 12 (physical address 28
+) is 24

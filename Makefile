@@ -9,4 +9,4 @@ mem.o:
 	gcc $(CFLAGS) -c memory.c
 
 clean:
-	rm -rf *.o mem
+	rm -rf *.o mem swap.txt

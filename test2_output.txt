@@ -1,0 +1,37 @@
+Instruction? 
+Put page table for PID 0 into physical frame 0
+Mapped virtual address 0 (page 0) into physical frame 1
+
+Instruction? 
+Virtual address  is not writeable
+
+Instruction? 
+Updated page value to 1
+
+Instruction? 
+Stored value 255 at virtual address 7 (physical address 23)
+
+Instruction? 
+The value at virtual address 7 (physical address 23
+) is 255
+
+Instruction? 
+ERROR: Page already has value 1
+
+Instruction? 
+Mapped virtual address 16 (page 1) into physical frame 2
+
+Instruction? 
+Mapped virtual address 32 (page 2) into physical frame 3
+
+Instruction? 
+Swapped frame 2 to disk at swap slot 1 
+Swapped frame 3 to disk at swap slot 2 
+Put page table for PID 1 into physical frame 32
+Mapped virtual address 0 (page 0) into physical frame 3
+
+Instruction? 
+The value at virtual address 7 (physical address 23
+) is 255
+
+Instruction?
