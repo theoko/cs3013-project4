@@ -558,6 +558,7 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	if (PTEaddr >= 0) {
 
+
 		if(memory[PTEaddr + VALID] == 1) {
 			int free_page = 0;
 			int i;
@@ -574,20 +575,109 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 				getPage(processID, virtAddr);
 
 			}
+
+
+
+			if (ptbrArr[processID].present == 1) {
+				int tempVirtAd = virtAddr; 
+				int virtPg = 0;
+				while (tempVirtAd >= PSIZE) {
+
+					if (tempVirtAd != 16)
+						tempVirtAd -= PSIZE;
+		
+					virtPg+=1;
+
+				}
+	
+		 		if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?
+			 		
+					physAddr = -1;
+				}
+				
+			       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+				int offset = virtAddr - (PSIZE * virtPg);
+				physAddr += offset;
+	
+			} else {
+				physAddress = -1;
+			}
+
+			if (physAddr >= 0) {
+
+				printf("The value at virtual address %u (physical address %d\n) is %d\n", virtAddr, physAddr, memory[physAddr]);
+
+				return 0;
+
+			}
+
+		} else if (memory[PTEaddr+VALID] == 2) {
+
+			
+			if (ptbrArr[processID].present == 1) {
+				int tempVirtAd = virtAddr; 
+				int virtPg = 0;
+				while (tempVirtAd >= PSIZE) {
+
+					if (tempVirtAd != 16)
+						tempVirtAd -= PSIZE;
+		
+					virtPg+=1;
+
+				}
+	
+		 		if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?
+			 		
+					physAddr = -1;
+				}
+				
+			       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+				int offset = virtAddr - (PSIZE * virtPg);
+				physAddr += offset;
+	
+			} else {
+				physAddress = -1;
+			}
+
+			
+			printf("The value at virtual address %u (physical address %d\n) is %d\n", virtAddr, physAddr, memory[physAddr]);
+			
+			
+		} else {
+
+
+			if (ptbrArr[processID].present == 1) {
+				int tempVirtAd = virtAddr; 
+				int virtPg = 0;
+				while (tempVirtAd >= PSIZE) {
+
+					if (tempVirtAd != 16)
+						tempVirtAd -= PSIZE;
+		
+					virtPg+=1;
+
+				}
+	
+		 		if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?
+			 		
+					physAddr = -1;
+				}
+				
+			       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+				int offset = virtAddr - (PSIZE * virtPg);
+				physAddr += offset;
+	
+			} else {
+				physAddress = -1;
+			}
+
+			printf("The virtual address requested has not been allocated. Value at %u was %d", virtAddr, memory[physAddr]);
+
 		}
+
+
+
 	} else if (PTEaddr == -1) {
-
-
-
-
-
-
-
-
-
-
-
-
 
 		int free_page = 0;
 		int i;
@@ -648,34 +738,6 @@ int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 			memory[physAddr] = value;
 			printf("The value at virtual address %u (physical address %d\n) is %d\n", virtAddr, physAddr, memory[physAddr]);
-
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		
 	} else {
