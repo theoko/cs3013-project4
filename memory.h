@@ -21,10 +21,25 @@
 #define PNUM 4
 
 
+#define VPN 0
+
+#define PFN 1
+
+#define PROTECTION 2
+
+#define VALID 3
+
 unsigned char memory[SIZE];
+
+
 int hasPageTable[PNUM]; // 0 if not, 1 if yes (index indicates corresponding process)
+
 int free_list[PNUM] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 
+int pages[PNUM];
+
+int rr;
+int lines;
 
 // Page table entry:
 //   - PFN (Physical Frame Number)
@@ -40,11 +55,26 @@ typedef struct PTBR_str {
 // Helper methods
 int getVPageCount(int virtAddr);
 int getPTEAddress(int processID, int virtAddr);
+void copyToMemory(unsigned char *procID, int base);
+
+// Round-robin
+void r();
 
 // Space allocation
 void space(int numFrames, int processID);
 int findSpace();
+
+// Swapping
+int pageToFile(unsigned char *buffer,int linenum, int base);
+int pageFromFile(unsigned char *buffer, int linenum);
+
+// Process page table
 int loadProcessPageTable(int processID);
+void removeProcessPageTable(int processID);
+
+// Pages
+int getPage(int processID, int virtAddr);
+int delPage(int processID, int physicalAddr);
 
 // Map, Load and Store
 int map(unsigned char processID, unsigned char virtAddr, unsigned char value);
