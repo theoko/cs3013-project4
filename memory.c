@@ -298,7 +298,7 @@ int getPage(int processID, int virtAddr) {
 
 }
 
-int delPage(int processID, int physicalAddr) {
+void delPage(int processID, int physicalAddr) {
 
 	int pte = getPTEAddress(processID, 0);
 
@@ -450,7 +450,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 			}
 			
          	if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?
-         		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+         		printf("Segmentation fault (no memory has been allocated for requested virtual address)\n");
          		return 0;
 			}
 						
@@ -459,14 +459,14 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 			physAddr += offset;
 			
 		} else {
-			printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+			printf("Segmentation fault (no memory has been allocated for requested virtual address)\n");
 			return 0;
 		}
 		
 		if(memory[PTEaddr+PROTECTION] == 1) { 
 
 			memory[physAddr] = value;
-			printf("Stored value %c at virtual address %c (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
 		} else {
 			printf("Virtual address %c is not writeable\n", virtAddr);
 			return 0;
@@ -531,7 +531,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 	
 
 			memory[physAddr] = value;
-			printf("Stored value %c at virtual address %c (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
 
 		} else {
 			printf("Not writeable");
@@ -552,8 +552,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
  *  - perform address translation of the provided virtual address
  * 	- return the byte stored in that virtual address
  */
-
-char load(unsigned char processID, unsigned char virtAddr,unsigned char value) {
+int load(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 //	int PTEaddr = getPTEAddress(processID, virtAddr);
 //
@@ -597,15 +596,27 @@ int main(int argc, char** argv) {
 	//  - virtualAddress
 	//  - value
 
-	int processID; // [0, 3]
-	int selection = -1; // ID to execute instruction the user selected to run
-	int virtAddr; // [0,63]
-	int value = -1; // [0,255]
+	unsigned char processID; // [0, 3]
+	unsigned char selection = -1; // ID to execute instruction the user selected to run
+	unsigned char virtAddr; // [0,63]
+	unsigned char value = -1; // [0,255]
 	char input[20]; // to receive from stdin
+	int k;
+	rr = 0;
 
+	FILE * temp = fopen("swapspace.txt","w");
+	fclose(temp);
+
+	for(k = 0; k < PNUM; k++){
+
+		ptbrArr[k].present = -1;
+		free_list[k] = 1;
+		pages[k] = -1;
+
+	}
 
 	
-	while(1){
+	while(1) {
 		char * tokenInput;
 		printf("Instruction? ");
 		if(fgets(input, 20, stdin)!=NULL){

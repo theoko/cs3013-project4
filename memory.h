@@ -74,7 +74,7 @@ void removeProcessPageTable(int processID);
 
 // Pages
 int getPage(int processID, int virtAddr);
-int delPage(int processID, int physicalAddr);
+void delPage(int processID, int physicalAddr);
 
 // Map, Load and Store
 int map(unsigned char processID, unsigned char virtAddr, unsigned char value);
