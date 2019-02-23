@@ -36,14 +36,14 @@ void map(int processID, int virtAddr, int value) {
  * 	- perform translation of the provided virtual_address
  * 	- write the value into the physical address associated with a virtual address
  */
-int store(int processID, int virtAddr, int value) {
+int store(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	int PTEaddr = getPTEAddress(processID, virtAddr);
 	int physAddr; 
 	// check if it's a valid age table entry 
 	// find physical adress
 	if(PTEaddr >= 0){ // if the page in memory
-		// convert
+
 		if (ptbrArr[processID].present == 1) {
 			int tempVirtAd = virtAddr; 
 			int virtPg = 0;
@@ -71,9 +71,9 @@ int store(int processID, int virtAddr, int value) {
 		if(memory[PTEaddr+PROTECTION] == 1) { 
 
 			memory[physAddr] = value;
-			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %c at virtual address %c (physical address %d\n)", value, virtAddr, physAddr);
 		} else {
-			printf("Virtual address %d is not writeable\n");
+			printf("Virtual address %c is not writeable\n", virtAddr);
 			return 0;
 		}
 				
@@ -108,7 +108,7 @@ int store(int processID, int virtAddr, int value) {
 		}
 
 		if (memory[PTEaddr + PROTECTION] == 1) {
-			//convert()
+
 			if(ptbrArr[processID].present == 1){
 				int tempVirtAd = virtAddr; 
 				int virtPg = 0;
@@ -137,17 +137,18 @@ int store(int processID, int virtAddr, int value) {
 	
 
 			memory[physAddr] = value;
-			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %c at virtual address %c (physical address %d\n)", value, virtAddr, physAddr);
 
 		} else {
 			printf("Not writeable");
 		}
 
+
 	} else {
 		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
 		return -1;
 	} 
-	//--------------------------------------
+
 
 	return 0;
 	
@@ -157,8 +158,36 @@ int store(int processID, int virtAddr, int value) {
  *  - perform address translation of the provided virtual address
  * 	- return the byte stored in that virtual address
  */
-char load(int processID, int virtAddr,int value) {
-	printf("load\n");	
+char load(unsigned char processID, unsigned char virtAddr,unsigned char value) {
+
+	int PTEaddr = getPTEAddress(processID, virtAddr);
+	
+	if (PTEaddr >= 0) {
+
+		if(memory[PTEaddr + VALID] == 1) {
+			int free_page = 0;
+			int i;
+			for (i=0; i<PNUM; i++) {
+				if(free_list[i] == 1)
+					free_page = 1;
+			}
+			
+			if (free_page) {
+				getPage(processID, virtAddr);
+			} else {
+
+				space(1, processID);
+				getPage(processID, virtAddr);
+
+			}
+		}
+	} else if () {
+
+	} else {
+		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+		return -1;
+	}	
+
 	return 0;
 }
 
