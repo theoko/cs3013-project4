@@ -1,0 +1,11 @@
+3,map,1,1
+2,map,1,1
+2,store,5,232
+3,store,12,12
+0,map,1,1
+2,load,5,0
+3,load,12,0
+1,map,16,1
+0,map,1,1
+2,store,5,1
+1,load,5,0

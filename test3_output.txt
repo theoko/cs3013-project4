@@ -1,0 +1,47 @@
+Instruction? 
+Put page table for PID 3 into physical frame 0
+Mapped virtual address 1 (page 0) into physical frame 1
+
+Instruction? 
+Put page table for PID 2 into physical frame 32
+Mapped virtual address 1 (page 0) into physical frame 3
+
+Instruction? 
+Stored value 232 at virtual address 5 (physical address 53)
+
+Instruction? 
+Stored value 12 at virtual address 12 (physical address 28)
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 1 
+Swapped frame 1 to disk at swap slot 2 
+Put page table for PID 0 into physical frame 16
+Mapped virtual address 1 (page 0) into physical frame 3
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 3 
+Page 0 for process 2 loaded from disk and stored at address 48
+The value at virtual address 5 (physical address 53
+) is 232
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 4 
+Page 0 for process 3 loaded from disk and stored at address 48
+The value at virtual address 12 (physical address 60
+) is 12
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 5 
+Page table for process 3 was swapped to disk 
+Put page table for PID 1 into physical frame 0
+Mapped virtual address 16 (page 1) into physical frame 3
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 7 
+Mapped virtual address 1 (page 0) into physical frame 3
+
+Instruction? 
+Stored value 1 at virtual address 5 (physical address 8)
+
+Instruction? 
+The virtual address requested has not been allocated. Value at 5 was 6
