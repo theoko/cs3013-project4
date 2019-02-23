@@ -352,7 +352,7 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 		int sfree = findSpace();
 
-		printf("Page table for process %d created at address %d\n", processID, sfree);
+		printf("Put page table for PID %d into physical frame %d\n", processID, sfree);
 
 		ptbrArr[processID].addr = sfree;
 		ptbrArr[processID].present = 1;
@@ -400,21 +400,21 @@ int map(unsigned char processID, unsigned char virtAddr, unsigned char value) {
 
 	}
 
-	int ppage = findSpace();
+	int physicalAddr = findSpace();
 
-	if(ppage < 0){
+	if(physicalAddr < 0){
 
 		space(1, processID);
 
-		ppage = findSpace();
+		physicalAddr = findSpace();
 
 	}
 
-	pages[ppage / PSIZE] = processID;
+	pages[physicalAddr / PSIZE] = processID;
 
-	printf("Physical page for VPN %d allocated at: %d\n", memory[pte],ppage);
+	printf("Mapped virtual address %d (page %d) into physical frame %d\n", memory[pte], getVPageCount(virtAddr), physicalAddr / PSIZE);
 
-	memory[pte + PFN] = ppage;
+	memory[pte + PFN] = physicalAddr;
 
 	memory[pte + PROTECTION] = value;
 
@@ -466,7 +466,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 		if(memory[PTEaddr+PROTECTION] == 1) { 
 
 			memory[physAddr] = value;
-			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d)\n", value, virtAddr, physAddr);
 		} else {
 			printf("Virtual address %c is not writeable\n", virtAddr);
 			return 0;
@@ -531,7 +531,7 @@ int store(unsigned char processID, unsigned char virtAddr, unsigned char value) 
 	
 
 			memory[physAddr] = value;
-			printf("Stored value %u at virtual address %u (physical address %d\n)", value, virtAddr, physAddr);
+			printf("Stored value %u at virtual address %u (physical address %d)\n", value, virtAddr, physAddr);
 
 		} else {
 			printf("Not writeable");
