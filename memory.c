@@ -37,13 +37,14 @@ void map(int processID, int virtAddr, int value) {
  * 	- write the value into the physical address associated with a virtual address
  */
 int store(int processID, int virtAddr, int value) {
-	printf("store\n");
+
+	int PTEaddr = getPTEAddress(processID, virtAddr);
 	int physAddr; 
 	// check if it's a valid age table entry 
 	// find physical adress
-	if(page table entry is valid){
+	if(PTEaddr >= 0){ // if the page in memory
 		// convert
-		if (hw[processID].inMem == 1) {
+		if (ptbrArr[processID].present == 1) {
 			int tempVirtAd = virtAddr; 
 			int virtPg = 0;
 			while (tempVirtAd >= PSIZE) {
@@ -53,13 +54,21 @@ int store(int processID, int virtAddr, int value) {
 				virtPg+=1;
 			}
 			
-			// QUESTION HERE-- do rest of if statement  !!!!!!!!!
+         		if(memory[ptbrArr[processID].addr + (4 * virtPg) + VALID] == 0) {//~valid?	
+			printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
+			return 0;			
+			}
+						
+		       	physAddr = memory[ptbrArr[processID].addr + (4 * virtPg) + PFN];
+			int offset = virtAddr - (PSIZE * virtPg);
+			physAddr += offset;
+			
 		} else {
 			printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");
-			physAddr = -1;	
+			return 0;
 		}
 		
-		if(page can be edited, store value) {
+		if(memory[PTEaddr+PROTECTION] == 1) { 
 
 			memory[physAddr] = value;
 			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
@@ -68,7 +77,7 @@ int store(int processID, int virtAddr, int value) {
 			return 0;
 		}
 				
-	} else if (page tble entry result is -1 - if page is in disk) {
+	} else if (PTEaddr == -1) { // if the page is in "disk"
 		int free_page = 0;
 		int i;
 		for (i = 0; i < PNUM; i++) {
@@ -76,7 +85,35 @@ int store(int processID, int virtAddr, int value) {
 				free_page+=1;
 		}
 		
-		if ()
+		if (ptbrArr[processID].present == 0) {
+			if (free_page < 1) {
+				space(1, processID);
+			}
+
+			loadProcessPageTable(processID);
+			int PTEaddr = getPTEAddress(processID, virtAddr);			
+
+			if (memory[PTEaddr+VALID] == 1) {
+
+				free_page-=1;
+				if (free_page < 1)
+					space(1, processID);
+
+				
+				//TODO: loadPage()
+ 
+			}
+			
+			
+		}
+
+		if (memory[PTEaddr + PROTECTION] == 1) {
+			//convert()
+			memory[physAddr] = value;
+			printf("Stored value %d at virtual address %d (physical address %d\n)", value, virtAddr, physAddr);
+		} else {
+			printf("Not writeable")
+		}
 
 	} else {
 		printf("Segmentation fault (no memory has been allocated for requested virtual address\n)");

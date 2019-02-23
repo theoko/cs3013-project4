@@ -21,6 +21,14 @@
 #define PNUM 4
 
 
+#define VPN 0
+
+#define PFN 1
+
+#define PROTECTION 2
+
+#define VALID 3
+
 unsigned char memory[SIZE];
 int hasPageTable[PNUM] // 0 if not, 1 if yes (index indicates corresponding process)
 int free_list[PNUM] = {1,1,1,1}; // 1 if free, 0 if page is occupied
@@ -36,7 +44,7 @@ int free_list[4] = {1,1,1,1}; // 1 if free, 0 if page is occupied
 typedef struct pnode {
 	int addr;
 	int present;
-} p_node;
+} ptbr;
 
 
 void map(int processID, int virtAddr, int value);
@@ -45,7 +53,7 @@ char load(int processID, int virtAddr, int value); // val not used in this
 
 //int userInput(void);
 
-p_node pArr[4];
+ptbr ptbrArr[4];
 
 
 void map(unsigned char processID, unsigned char virtAddr, unsigned char value);
