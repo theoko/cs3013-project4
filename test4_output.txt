@@ -1,0 +1,42 @@
+Instruction? 
+Put page table for PID 0 into physical frame 0
+Mapped virtual address 0 (page 0) into physical frame 1
+
+Instruction? 
+Virtual address  is not writeable
+
+Instruction? 
+Updated page value to 1
+
+Instruction? 
+Stored value 234 at virtual address 15 (physical address 31)
+
+Instruction? 
+The value at virtual address 15 (physical address 31
+) is 234
+
+Instruction? 
+Put page table for PID 1 into physical frame 32
+Mapped virtual address 0 (page 0) into physical frame 3
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 1 
+Swapped frame 1 to disk at swap slot 2 
+Put page table for PID 2 into physical frame 16
+Mapped virtual address 0 (page 0) into physical frame 3
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 3 
+Page table for process 0 was swapped to disk 
+Put page table for PID 3 into physical frame 0
+Mapped virtual address 0 (page 0) into physical frame 3
+
+Instruction? 
+Swapped frame 3 to disk at swap slot 5 
+Page table for process 0 loaded from disk and stored at address 48
+Swapped frame 1 to disk at swap slot 6 
+Page 0 for process 0 loaded from disk and stored at address 16
+The value at virtual address 15 (physical address 31
+) is 0
+
+Instruction? 
